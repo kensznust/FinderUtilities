@@ -24,7 +24,8 @@ class FinderSync: FIFinderSync {
 
         // Produce a menu for the extension (to be shown when right clicking a folder in Finder)
         let menu = NSMenu(title: "")
-        menu.addItem(withTitle: "Open Terminal", action: #selector(openTerminalClicked(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: "Open iTerm2", action: #selector(openiTermClicked(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: "Open VSCode", action: #selector(openVSCodeClicked(_:)), keyEquivalent: "")
         menu.addItem(withTitle: "Create empty.txt", action: #selector(createEmptyFileClicked(_:)), keyEquivalent: "")
         menu.addItem(withTitle: "Copy selected paths", action: #selector(copyPathToClipboard), keyEquivalent: "")
 
@@ -56,8 +57,8 @@ class FinderSync: FIFinderSync {
         pasteboard.setString(result, forType: NSPasteboard.PasteboardType.string)
     }
 
-    /// Opens a macOS Terminal.app window in the user-chosen folder
-    @IBAction func openTerminalClicked(_ sender: AnyObject?) {
+    /// Opens a macOS iTerm.app window in the user-chosen folder
+    @IBAction func openiTermClicked(_ sender: AnyObject?) {
         
         guard let target = FIFinderSyncController.default().targetedURL() else {
             
@@ -68,7 +69,7 @@ class FinderSync: FIFinderSync {
         
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
-        task.arguments = ["-a", "terminal", "\(target)"]
+        task.arguments = ["-a", "iTerm", "\(target)"]
         
         do {
             
@@ -76,7 +77,31 @@ class FinderSync: FIFinderSync {
 
         } catch let error as NSError {
             
-            NSLog("Failed to open Terminal.app: %@", error.description as NSString)
+            NSLog("Failed to open iTerm.app: %@", error.description as NSString)
+        }
+    }
+    
+    /// Opens a macOS vscode.app  in the user-chosen folder
+    @IBAction func openVSCodeClicked(_ sender: AnyObject?) {
+        
+        guard let target = FIFinderSyncController.default().targetedURL() else {
+            
+            NSLog("Failed to obtain targeted URL: %@")
+            
+            return
+        }
+        
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+        task.arguments = ["-a", "Visual Studio Code", "\(target)"]
+        
+        do {
+            
+            try task.run()
+
+        } catch let error as NSError {
+            
+            NSLog("Failed to open VSCode.app: %@", error.description as NSString)
         }
     }
 
